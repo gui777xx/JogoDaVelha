@@ -5,13 +5,13 @@ import { Entypo } from '@expo/vector-icons'
 export default function Figura({vetor, posicao, clicado }) {
   const getIcon = () => {
     if (vetor[posicao] !== 0) {
-      return vetor[posicao] ? "cross" : 'circle';
+      return vetor[posicao] ? "moon" : 'light-up';
     }
-    return "pencil";
+    return "cloud";
   }
   return (
     <TouchableOpacity onPress={clicado}>
-      <Entypo name={getIcon()} size={100} color="#000" />
+      <Entypo name={getIcon()} size={100} color="#FF0000" />
       </TouchableOpacity>
   )
 }

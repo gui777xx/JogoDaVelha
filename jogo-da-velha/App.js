@@ -1,58 +1,96 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, RefreshControl, ScrollView} from 'react-native';
 import Figura from './components/figura';
 import { useState } from 'react';
-
+''
 let array = new Array(9).fill(0);
 
 
 export default function App() {
-  const [Values, setValues] = useState({
+  const [values, setValues] = useState({
     isCross: true,
     winMessage: ""
   })
+  const [refresh, setRefresh] = useState(false)
+
+  const resetGame = () => {
+    setRefresh(true);
+    array.fill(0);
+    setValues( { isCross: true, winMessage: ""});
+    setRefresh(false)
+  }
   
   const changeMove = (number) => {  
-    if (array[number === 0 && !Values.winMessage]) {
+    if (array[number] === 0 && !values.winMessage) {
       array [number] = values.isCross;
       setValues({ isCross: !values.isCross})
+      winGame(number);
     }
   }
 
+  const winGame = (number) => {
+    if (
+      // Linhas iguais
+          (array[0] === array[number] && array[1] === array[number] && array[2] === array[number])
+      ||  (array[3] === array[number] && array[4] === array[number] && array[5] === array[number])
+      ||  (array[6] === array[number] && array[7] === array[number] && array[8] === array[number])
+
+      // Colunas 
+      ||  (array[0] === array[number] && array[3] === array[number] && array[6] === array[number])
+      ||  (array[1] === array[number] && array[4] === array[number] && array[7] === array[number])
+      ||  (array[2] === array[number] && array[5] === array[number] && array[8] === array[number])
+      // Diagonais
+    
+      ||  (array[0] === array[number] && array[4] === array[number] && array[8] === array[number])
+      ||  (array[2] === array[number] && array[4] === array[number] && array[6] === array[number])
+    ){
+        setValues({ ...values, winMessage: array[number] ? "x venceu" : "O venceu"});
+     }  else if (array.every((element) => element !== 0)) {
+        setValues({ ...values,winMessage: "Empate" });
+     }
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={style.container}>Jogo da Velha</Text>
-      <View style={style.row}>
-        <View style={style.box}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={ 
+        <RefreshControl refreshing={refresh} onRefresh={() => resetGame}/>
+
+      }
+     >
+      <Text style={styles.text}>Jogo da Velha</Text>
+      <View style={styles.row}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={0} clicado={() => changeMove(0)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={1} clicado={() => changeMove(1)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={2} clicado={() => changeMove(2)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={3} clicado={() => changeMove(3)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={4} clicado={() => changeMove(4)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={5} clicado={() => changeMove(5)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={6} clicado={() => changeMove(6)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={7} clicado={() => changeMove(7)} />
         </View>
-        <View style={style.box}>
+        <View style={styles.box}>
           <Figura  vetor={array} posicao={8} clicado={() => changeMove(8)} />
         </View>
       </View>
+      <Text style={styles.winMessage}>{values.winMessage}</Text>
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -76,8 +114,14 @@ row: {
   justifyContent: 'center'
 },
 box: {
-  borderWicht: 2,
+  borderWidth: 2,
   borderColor: '#000',
   padding: 10, 
+},
+winMessage: {
+  fontSize: 30,
+  coloR: '#' ,
+  fontWeight: 'bold',
+  marginTop: 20
 }
 });
